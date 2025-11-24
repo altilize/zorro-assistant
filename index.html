@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zorro</title>
+    <title>Zorro AI</title>
     <style>
-        /* --- RESET & VARIABLES --- */
+        /* --- TEMA & VARIABEL --- */
         :root {
-            --bg-color: #09090b; /* Zinc-950 (Hampir hitam) */
-            --chat-bg: #09090b;
-            --user-bubble: #fafafa; /* Putih */
-            --user-text: #18181b; /* Hitam */
-            --ai-bubble: #27272a; /* Zinc-800 */
-            --ai-text: #e4e4e7; /* Zinc-200 */
-            --accent: #2563eb; /* Biru kalem (opsional) */
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-color: #0f172a; /* Slate-950 (Biru Malam Gelap) */
+            --user-bubble: #3b82f6; /* Blue-500 (Biru Modern) */
+            --user-text: #ffffff;
+            --ai-bubble: #1e293b; /* Slate-800 */
+            --ai-text: #e2e8f0; /* Slate-200 */
+            --accent: #60a5fa; 
+            --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -24,19 +23,20 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100dvh; /* Dynamic viewport height */
+            height: 100dvh;
             overflow: hidden;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER ELEGANT --- */
         header {
-            padding: 20px;
+            padding: 25px;
             text-align: center;
-            font-weight: 600;
-            font-size: 14px;
-            letter-spacing: 1px;
-            color: #71717a; /* Warna abu samar */
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #94a3b8;
             text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         /* --- CHAT AREA --- */
@@ -46,32 +46,36 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             scroll-behavior: smooth;
         }
 
-        /* Scrollbar minimalis */
         #chat-container::-webkit-scrollbar { width: 5px; }
-        #chat-container::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        #chat-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
         .message {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 18px;
+            max-width: 85%;
+            padding: 14px 20px;
+            border-radius: 20px;
             font-size: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
             position: relative;
             word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
         .zorro {
             align-self: flex-start;
             background-color: var(--ai-bubble);
             color: var(--ai-text);
             border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .user {
@@ -79,87 +83,82 @@
             background-color: var(--user-bubble);
             color: var(--user-text);
             border-bottom-right-radius: 4px;
-            font-weight: 500;
         }
 
         .typing-indicator {
-            font-size: 12px; color: #555; margin-left: 10px; margin-bottom: 10px; display: none;
+            font-size: 12px; color: #64748b; margin-left: 25px; margin-bottom: 10px; display: none; font-style: italic;
         }
 
         /* --- INPUT AREA --- */
         #input-area {
             padding: 20px;
-            background: rgba(9, 9, 11, 0.95); /* Sedikit transparan */
-            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         #user-input {
             flex: 1;
-            padding: 15px 20px;
+            padding: 16px 24px;
             border-radius: 30px;
-            border: 1px solid #333;
-            background: #18181b;
+            border: 1px solid #334155;
+            background: #1e293b;
             color: white;
             font-size: 16px;
             font-family: inherit;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
         }
 
-        #user-input:focus { border-color: #555; }
+        #user-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+        }
 
         button {
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #27272a;
+            background: #334155;
             color: white;
             transition: all 0.2s;
         }
 
-        button:hover { background: #3f3f46; }
-        button:disabled { opacity: 0.5; cursor: default; }
-        
-        button svg { width: 20px; height: 20px; fill: currentColor; }
+        button:hover { background: #475569; transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+        button svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* --- MODAL (API KEY) --- */
+        /* --- MODAL --- */
         #key-modal {
-            position: fixed; inset: 0;
-            background: #000;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            transition: opacity 0.5s;
+            position: fixed; inset: 0; background: #020617; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; transition: opacity 0.5s;
         }
-        
         #key-modal.hidden { opacity: 0; pointer-events: none; }
-
         .modal-content { text-align: center; max-width: 400px; width: 100%; }
-        .modal-content h2 { font-weight: 400; font-size: 24px; margin-bottom: 10px; }
-        .modal-content p { color: #888; font-size: 14px; margin-bottom: 30px; }
-        
+        .modal-content h2 { font-weight: 300; font-size: 28px; margin-bottom: 10px; color: white; }
+        .modal-content p { color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
         #api-input {
-            width: 100%; padding: 15px; border-radius: 10px;
-            border: 1px solid #333; background: #111; color: white;
+            width: 100%; padding: 16px; border-radius: 12px;
+            border: 1px solid #334155; background: #0f172a; color: white;
             text-align: center; font-family: monospace; font-size: 14px;
-            margin-bottom: 20px; box-sizing: border-box;
+            margin-bottom: 20px; box-sizing: border-box; outline: none;
         }
-        
+        #api-input:focus { border-color: var(--accent); }
         .btn-primary {
-            width: 100%; padding: 15px; background: #fff; color: #000;
-            font-weight: 600; border-radius: 10px; border: none; font-size: 14px;
+            width: 100%; padding: 16px; background: var(--user-bubble); color: white;
+            font-weight: 600; border-radius: 12px; border: none; font-size: 15px;
+            letter-spacing: 0.5px;
         }
+        .btn-primary:hover { background: #2563eb; }
 
     </style>
 </head>
@@ -167,41 +166,46 @@
 
     <div id="key-modal">
         <div class="modal-content">
-            <h2>Selamat Datang, Moses.</h2>
-            <p>Masukkan kunci akses Groq Anda untuk mengaktifkan Zorro.</p>
+            <h2>Selamat Datang, Moses</h2>
+            <p>Sistem Zorro membutuhkan otentikasi.<br>Masukkan API Key Anda untuk melanjutkan.</p>
             <input type="password" id="api-input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxx">
-            <button class="btn-primary" onclick="saveKey()">Masuk</button>
+            <button class="btn-primary" onclick="saveKey()">Aktifkan Sistem</button>
         </div>
     </div>
 
-    <header>ZORRO &bull; PERSONAL ASSISTANT</header>
+    <header>ZORRO &bull; Personal Assistan</header>
 
     <div id="chat-container">
         <div class="message zorro">
-            Yo Moses. Ready to code or what?
+            Halo, Moses. Saya Zorro, asisten pribadi Anda. Ada yang bisa saya bantu terkait proyek robotika, coding, atau jadwal Anda hari ini?
         </div>
     </div>
     
-    <div class="typing-indicator" id="typing">Zorro is typing...</div>
+    <div class="typing-indicator" id="typing">Zorro sedang menganalisis...</div>
 
     <div id="input-area">
-        <input type="text" id="user-input" placeholder="Tanya sesuatu..." autocomplete="off" onkeypress="handleEnter(event)">
+        <input type="text" id="user-input" placeholder="Ketik perintah atau pertanyaan..." autocomplete="off" onkeypress="handleEnter(event)">
         
-        <button onclick="toggleVoice()" id="mic-btn" title="Bicara">
+        <button onclick="toggleVoice()" id="mic-btn" title="Perintah Suara">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.66 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
         </button>
 
-        <button onclick="sendMessage()" id="send-btn" title="Kirim">
+        <button onclick="sendMessage()" id="send-btn" title="Kirim Pesan">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
 
     <script>
-        // --- LOGIC (SAMA SEPERTI SEBELUMNYA) ---
+        // --- KONFIGURASI KEPRIBADIAN BARU (CERDAS & SOPAN) ---
+        const SYSTEM_PROMPT = 
+            "Kamu adalah Zorro, asisten AI pribadi milik Moses yang sangat cerdas, sopan, dan profesional. " +
+            "Kepribadianmu tenang, hormat, dan sangat membantu. " +
+            "Kamu memiliki keahlian mendalam (Expert Level) di bidang Robotika, Coding ESP32, Python, Networking, dan Computer Science. " +
+            "Berikan jawaban yang analitis, berwawasan luas, dan detail jika diminta. " +
+            "Gunakan Bahasa Indonesia yang baku dan formal, namun tetap luwes. " +
+            "Jangan pernah merendahkan pengguna. Fokusmu adalah memberikan solusi terbaik dan paling efisien untuk Moses.";
         
-        const SYSTEM_PROMPT = "You are Zorro, AI assistant milik Moses. Gaya bicara lo 'Anak Jaksel' (campur English). Sifat lo sarkas, witty, dan suka roasting Moses kalau nanya hal basic. Lo expert di bidang Robotika, Coding ESP32, dan Networking. Jawab singkat dan to the point.";
-        
-        let apiKey = localStorage.getItem("groq_key_v2"); // Pakai key v2 biar fresh
+        let apiKey = localStorage.getItem("groq_key_v3"); 
         const chatBox = document.getElementById("chat-container");
         const typingInd = document.getElementById("typing");
 
@@ -212,11 +216,11 @@
         function saveKey() {
             const input = document.getElementById("api-input").value.trim();
             if (input.startsWith("gsk_")) {
-                localStorage.setItem("groq_key_v2", input);
+                localStorage.setItem("groq_key_v3", input);
                 apiKey = input;
                 document.getElementById("key-modal").classList.add("hidden");
             } else {
-                alert("Key tidak valid. Harus diawali 'gsk_'");
+                alert("Format Key tidak valid. Pastikan diawali 'gsk_'");
             }
         }
 
@@ -228,10 +232,12 @@
             const div = document.createElement("div");
             div.className = `message ${role}`;
             
-            // Format teks sederhana (bolding **text**)
-            let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            div.innerHTML = formattedText;
+            // Format Bold dan Code Block sederhana
+            let formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/`(.*?)`/g, '<code style="background:#334155; padding:2px 5px; border-radius:4px;">$1</code>');
             
+            div.innerHTML = formattedText;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -242,7 +248,7 @@
             if (!text) return;
 
             inputField.value = "";
-            inputField.blur(); // Tutup keyboard di HP
+            inputField.blur(); 
             appendMessage("user", text);
             
             typingInd.style.display = "block";
@@ -255,12 +261,13 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
+                        model: "llama-3.3-70b-versatile", // Model paling pintar saat ini
                         messages: [
                             { role: "system", content: SYSTEM_PROMPT },
                             { role: "user", content: text }
                         ],
-                        temperature: 0.7
+                        temperature: 0.5, // 0.5 lebih stabil/fokus dibanding 0.7 (lebih kreatif)
+                        max_tokens: 1024
                     })
                 });
 
@@ -272,21 +279,22 @@
                 const reply = data.choices[0].message.content;
                 appendMessage("zorro", reply);
                 
-                // Speak
+                // Voice Output (Lebih lambat & jelas untuk kesan sopan)
                 const utterance = new SpeechSynthesisUtterance(reply);
                 utterance.lang = 'id-ID';
-                utterance.rate = 1.1;
+                utterance.rate = 0.95; 
+                utterance.pitch = 0.9;
                 window.speechSynthesis.speak(utterance);
 
             } catch (err) {
                 typingInd.style.display = "none";
-                appendMessage("zorro", "⚠️ Error: " + err.message);
+                appendMessage("zorro", "Mohon maaf Moses, terjadi gangguan koneksi: " + err.message);
                 if (err.message.includes("401")) {
-                    localStorage.removeItem("groq_key_v2");
+                    localStorage.removeItem("groq_key_v3");
                     location.reload();
                 }
             }
-            inputField.focus(); // Fokus balik
+            inputField.focus();
         }
 
         function toggleVoice() {
@@ -295,18 +303,17 @@
             recognition.start();
             
             const btn = document.getElementById("mic-btn");
-            const originalColor = btn.style.backgroundColor;
-            btn.style.backgroundColor = "#ef4444"; // Merah saat record
+            btn.style.background = "#ef4444"; 
 
             recognition.onresult = (event) => {
                 const speech = event.results[0][0].transcript;
                 document.getElementById("user-input").value = speech;
                 sendMessage();
-                btn.style.backgroundColor = ""; // Reset warna
+                btn.style.background = ""; 
             };
             
             recognition.onend = () => {
-                btn.style.backgroundColor = "";
+                btn.style.background = "";
             };
         }
     </script>
