@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zorro (Memory)</title>
+    <title>Zorro (Long Term Memory)</title>
     <style>
-        /* --- TEMA SAFE SPACE --- */
+        /* --- TEMA PRO (Deep Focus) --- */
         :root {
-            --bg-color: #0f0f12;
-            --user-bubble: #6d28d9;
-            --user-text: #f3e8ff;
-            --ai-bubble: #18181b;
+            --bg-color: #09090b; /* Zinc 950 */
+            --header-bg: rgba(9, 9, 11, 0.95);
+            --user-bubble: #2563eb; /* Royal Blue */
+            --user-text: #ffffff;
+            --ai-bubble: #27272a; /* Zinc 800 */
             --ai-text: #e4e4e7;
-            --accent: #a78bfa;
-            --font-main: "Inter", sans-serif;
+            --timestamp-color: #71717a;
+            --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
@@ -27,321 +28,335 @@
             overflow: hidden;
         }
 
-        /* HEADER DENGAN MENU */
+        /* HEADER */
         header {
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(15,15,18,0.95);
+            border-bottom: 1px solid #27272a;
+            background: var(--header-bg);
+            z-index: 10;
         }
-        
-        .brand { font-size: 14px; letter-spacing: 2px; color: #71717a; text-transform: uppercase; font-weight: 600; }
-        
-        .menu-btn {
-            background: none; border: none; color: #52525b; font-size: 20px; cursor: pointer;
-        }
+        .brand { font-size: 14px; letter-spacing: 1.5px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; }
+        .menu-icon { font-size: 20px; color: #71717a; cursor: pointer; }
 
-        /* AREA CHAT */
+        /* CHAT CONTAINER */
         #chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            scroll-behavior: smooth;
+            gap: 20px; /* Jarak antar chat lebih lega */
         }
 
-        /* Pesan */
-        .message {
+        /* PESAN */
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
             max-width: 85%;
-            padding: 14px 18px;
+        }
+
+        .zorro-wrapper { align-self: flex-start; }
+        .user-wrapper { align-self: flex-end; align-items: flex-end; }
+
+        .message {
+            padding: 12px 18px;
             border-radius: 18px;
             font-size: 15px;
             line-height: 1.6;
             word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
+            position: relative;
         }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .zorro { align-self: flex-start; background: var(--ai-bubble); color: var(--ai-text); border-bottom-left-radius: 2px; }
-        .user { align-self: flex-end; background: var(--user-bubble); color: var(--user-text); border-bottom-right-radius: 2px; }
-        
-        .timestamp { font-size: 10px; opacity: 0.5; margin-top: 5px; display: block; text-align: right; }
+        .zorro-msg { background: var(--ai-bubble); color: var(--ai-text); border-bottom-left-radius: 4px; }
+        .user-msg { background: var(--user-bubble); color: var(--user-text); border-bottom-right-radius: 4px; }
+
+        /* TIMESTAMP DESIGN */
+        .time-info {
+            font-size: 10px;
+            color: var(--timestamp-color);
+            margin-top: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+            font-weight: 500;
+        }
 
         /* INPUT AREA */
         #input-area {
             padding: 15px;
-            background: rgba(15,15,18,0.95);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            background: var(--header-bg);
+            border-top: 1px solid #27272a;
             display: flex; gap: 10px; align-items: flex-end;
         }
 
         #user-input {
             flex: 1;
             padding: 14px 20px;
-            border-radius: 25px;
+            border-radius: 24px;
             border: 1px solid #27272a;
             background: #18181b;
             color: #fff;
             font-size: 16px;
+            font-family: inherit;
             outline: none;
-            max-height: 100px;
-            resize: none; /* Auto-grow nanti via JS */
+            resize: none;
+            max-height: 120px;
+            transition: border-color 0.3s;
         }
-        
-        .action-btn {
-            width: 48px; height: 48px; border-radius: 50%; border: none;
+        #user-input:focus { border-color: #52525b; }
+
+        .icon-btn {
+            width: 45px; height: 45px; border-radius: 50%; border: none;
             background: #27272a; color: #a1a1aa; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
         }
-        .action-btn:hover { background: #3f3f46; color: #fff; }
-        .action-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .icon-btn:hover { background: #3f3f46; color: white; }
+        .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-        /* MODAL (LOGIN & MENU) */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; display: flex; align-items: center; justify-content: center; }
+        /* MODALS */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; display: flex; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
-        .modal-box { background: #18181b; padding: 30px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #27272a; }
+        .modal-card { background: #18181b; padding: 30px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; border: 1px solid #27272a; }
         
-        input[type="password"] { width: 100%; padding: 12px; margin: 15px 0; background: #0f0f12; border: 1px solid #333; color: white; border-radius: 8px; text-align: center; box-sizing: border-box;}
+        input[type="password"] { width: 100%; padding: 14px; background: #09090b; border: 1px solid #333; color: white; border-radius: 8px; text-align: center; margin: 20px 0; outline: none; box-sizing: border-box; }
         
-        .btn-full { width: 100%; padding: 12px; background: var(--user-bubble); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-danger { background: #ef4444; margin-top: 10px; }
+        .btn-primary { width: 100%; padding: 14px; background: var(--user-bubble); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .btn-danger { background: #dc2626; margin-top: 10px; }
 
-        #typing-indicator { font-size: 12px; color: #555; margin-left: 20px; margin-bottom: 10px; font-style: italic; display: none;}
+        #typing { font-size: 12px; color: #71717a; margin-left: 25px; margin-bottom: 10px; font-style: italic; display: none; }
+
     </style>
 </head>
 <body>
 
     <div id="login-modal" class="modal hidden">
-        <div class="modal-box">
-            <h3>🔐 Identifikasi Diri</h3>
-            <p style="color:#777; font-size:13px;">Masukkan Groq API Key Anda sekali saja.</p>
+        <div class="modal-card">
+            <h2 style="color:#fff; font-weight:500; margin-bottom:10px;">Akses Zorro</h2>
+            <p style="color:#71717a; font-size:13px; margin:0;">Masukkan Groq API Key Anda.</p>
             <input type="password" id="api-key-input" placeholder="gsk_xxxxxxxx...">
-            <button class="btn-full" onclick="saveApiKey()">Simpan & Masuk</button>
+            <button class="btn-primary" onclick="saveApiKey()">Hubungkan</button>
         </div>
     </div>
 
     <div id="menu-modal" class="modal hidden">
-        <div class="modal-box">
-            <h3>Pengaturan Zorro</h3>
-            <button class="btn-full" onclick="toggleMenu()">Kembali</button>
-            <button class="btn-full btn-danger" onclick="clearHistory()">Hapus Riwayat Chat</button>
-            <button class="btn-full btn-danger" style="background:#7f1d1d" onclick="logout()">Logout / Ganti Key</button>
+        <div class="modal-card">
+            <h3 style="color:#fff;">Pengaturan</h3>
+            <button class="btn-primary" onclick="toggleMenu()" style="background:#3f3f46; margin-bottom:10px;">Kembali</button>
+            <button class="btn-primary btn-danger" onclick="clearHistory()">Lupakan Semua Kenangan</button>
+            <button class="btn-primary btn-danger" style="background:#7f1d1d" onclick="logout()">Ganti API Key</button>
         </div>
     </div>
 
     <header>
-        <span class="brand">ZORRO &bull; MEMORY</span>
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="brand">ZORRO &bull; PERSONAL</div>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
     </header>
 
-    <div id="chat-container">
-        </div>
-    
-    <div id="typing-indicator">Zorro sedang mengingat...</div>
+    <div id="chat-container"></div>
+    <div id="typing">Zorro sedang berpikir...</div>
 
     <div id="input-area">
-        <textarea id="user-input" rows="1" placeholder="Cerita apa hari ini, Moses?"></textarea>
+        <textarea id="user-input" rows="1" placeholder="Ketik pesan..."></textarea>
         
-        <button class="action-btn" onclick="toggleVoice()" id="mic-btn">
+        <button class="icon-btn" onclick="toggleVoice()" id="mic-btn">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.66 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
         </button>
         
-        <button class="action-btn" onclick="sendMessage()" style="color:#a78bfa">
+        <button class="icon-btn" onclick="sendMessage()" style="color:#60a5fa">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
 
     <script>
-        // --- KONFIGURASI MEMORY ---
+        // --- KONFIGURASI MEMORI JANGKA PANJANG ---
         const SYSTEM_PROMPT = 
-            "Kamu adalah Zorro, sahabat dekat Moses. " +
-            "Sifatmu: Empatik, pendengar yang baik, suportif, dan sedikit humoris jika situasinya pas. " +
-            "PENTING: Kamu memiliki 'Ingatan'. Gunakan konteks dari chat-chat sebelumnya untuk menjawab. " +
-            "Jika Moses membahas topik yang pernah dibicarakan, tunjukkan bahwa kamu mengingatnya. " +
-            "Jangan ulangi perkenalan diri ('Halo saya Zorro') jika percakapan sudah berjalan lama. " +
-            "Gunakan bahasa Indonesia santai tapi sopan.";
+            "Kamu adalah Zorro, asisten pribadi dan sahabat dekat Moses. " +
+            "Ingatanmu panjang. Kamu mengenal Moses dari percakapan-percakapan sebelumnya. " +
+            "Gunakan konteks sejarah chat untuk memberikan jawaban yang personal. " +
+            "Jika Moses bertanya 'Apa yang kita bahas kemarin?', cek konteks history dan jawab. " +
+            "Jadilah pendengar yang baik, suportif, cerdas, dan sopan. " +
+            "Gunakan Bahasa Indonesia yang natural.";
 
-        // Nama variabel untuk penyimpanan lokal
-        const LS_KEY = "zorro_api_v5";
-        const LS_HISTORY = "zorro_chat_history";
+        const STORAGE_KEY = "zorro_api_v6"; // Versi baru
+        const HISTORY_KEY = "zorro_full_history_v6";
 
-        let apiKey = localStorage.getItem(LS_KEY);
-        let chatHistory = JSON.parse(localStorage.getItem(LS_HISTORY)) || [];
+        let apiKey = localStorage.getItem(STORAGE_KEY);
+        // Struktur Data baru: Array of Objects { role, content, time }
+        let chatHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
 
-        // --- INIT ---
-        window.onload = function() {
+        // INIT
+        window.onload = () => {
             if (!apiKey) {
                 document.getElementById('login-modal').classList.remove('hidden');
             } else {
-                renderHistory(); // Tampilkan chat lama
-                if(chatHistory.length === 0) {
-                    // Pesan pembuka jika sejarah kosong
-                    addLocalMessage("zorro", "Halo Moses! Saya Zorro. Ingatan saya sudah aktif. Apa yang ingin kamu ceritakan hari ini?");
-                }
+                renderHistory();
+                if(chatHistory.length === 0) addMessage("zorro", "Halo Moses. Saya siap menemani hari Anda.");
             }
         };
 
         // --- CORE FUNCTIONS ---
-
         function saveApiKey() {
             const input = document.getElementById('api-key-input').value.trim();
             if (input.startsWith("gsk_")) {
-                localStorage.setItem(LS_KEY, input);
+                localStorage.setItem(STORAGE_KEY, input);
                 apiKey = input;
                 document.getElementById('login-modal').classList.add('hidden');
-                addLocalMessage("zorro", "Sistem aktif. Riwayat percakapan akan disimpan secara lokal.");
             } else {
-                alert("API Key tidak valid.");
+                alert("API Key harus diawali 'gsk_'");
             }
         }
 
-        function toggleMenu() {
-            document.getElementById('menu-modal').classList.toggle('hidden');
-        }
-
+        function toggleMenu() { document.getElementById('menu-modal').classList.toggle('hidden'); }
+        
         function logout() {
-            if(confirm("Hapus API Key? Anda harus login lagi nanti.")) {
-                localStorage.removeItem(LS_KEY);
-                location.reload();
-            }
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
         }
 
         function clearHistory() {
-            if(confirm("Hapus semua ingatan chat? Zorro akan melupakan percakapan sebelumnya.")) {
-                localStorage.removeItem(LS_HISTORY);
+            if(confirm("Yakin ingin menghapus semua kenangan?")) {
+                localStorage.removeItem(HISTORY_KEY);
                 chatHistory = [];
-                document.getElementById('chat-container').innerHTML = "";
-                addLocalMessage("zorro", "Ingatan telah direset. Halo lagi, Moses!");
+                renderHistory();
                 toggleMenu();
             }
         }
 
-        // --- CHAT LOGIC ---
+        // --- TIME FORMATTER ---
+        function getFormattedTime() {
+            const now = new Date();
+            // Format: 29 Nov, 14:30
+            const options = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+            return now.toLocaleDateString('id-ID', options);
+        }
+
+        // --- RENDER ENGINE ---
+        function addMessage(role, text) {
+            const time = getFormattedTime();
+            
+            // 1. Simpan ke Memory (Array & LocalStorage)
+            chatHistory.push({ role, content: text, time });
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(chatHistory));
+            
+            // 2. Tampilkan di Layar
+            renderOneMessage(role, text, time);
+            scrollToBottom();
+        }
 
         function renderHistory() {
             const container = document.getElementById('chat-container');
             container.innerHTML = "";
             chatHistory.forEach(msg => {
-                const div = document.createElement("div");
-                div.className = `message ${msg.role}`;
-                div.innerHTML = formatText(msg.content);
-                container.appendChild(div);
+                renderOneMessage(msg.role, msg.content, msg.time);
             });
             scrollToBottom();
         }
 
-        function addLocalMessage(role, text) {
+        function renderOneMessage(role, text, time) {
             const container = document.getElementById('chat-container');
-            const div = document.createElement("div");
-            div.className = `message ${role}`;
-            div.innerHTML = formatText(text);
-            container.appendChild(div);
-            scrollToBottom();
+            
+            const wrapper = document.createElement("div");
+            wrapper.className = `message-wrapper ${role === 'zorro' ? 'zorro-wrapper' : 'user-wrapper'}`;
+            
+            // Bubble Pesan
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${role === 'zorro' ? 'zorro-msg' : 'user-msg'}`;
+            msgDiv.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            
+            // Timestamp
+            const timeDiv = document.createElement("div");
+            timeDiv.className = "time-info";
+            timeDiv.innerText = time;
 
-            // Simpan ke Array & LocalStorage
-            chatHistory.push({ role: role, content: text });
-            localStorage.setItem(LS_HISTORY, JSON.stringify(chatHistory));
-        }
-
-        function formatText(text) {
-            return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            wrapper.appendChild(msgDiv);
+            wrapper.appendChild(timeDiv);
+            container.appendChild(wrapper);
         }
 
         function scrollToBottom() {
-            const container = document.getElementById('chat-container');
-            container.scrollTop = container.scrollHeight;
+            const c = document.getElementById('chat-container');
+            c.scrollTop = c.scrollHeight;
         }
 
+        // --- AI LOGIC (LONG MEMORY) ---
         async function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const text = inputField.value.trim();
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
             if (!text) return;
 
-            inputField.value = "";
-            inputField.style.height = "auto"; // Reset height textarea
-            addLocalMessage("user", text);
-            
-            document.getElementById('typing-indicator').style.display = "block";
+            input.value = "";
+            input.style.height = "auto";
+            addMessage("user", text);
+            document.getElementById('typing').style.display = "block";
 
-            // SIAPKAN MEMORY (CONTEXT WINDOW)
-            // Kita ambil System Prompt + 20 pesan terakhir agar AI "ingat" konteks terkini
-            // tapi tidak membebani token limit.
-            let context = [
-                { role: "system", content: SYSTEM_PROMPT }
-            ];
+            // SIAPKAN CONTEXT (SUPER MEMORY)
+            // Llama 3 punya limit token besar, tapi kita batasi 100-200 pesan terakhir
+            // agar browser tidak crash saat parsing JSON raksasa.
+            const MEMORY_LIMIT = 200; 
             
-            // Ambil maksimal 20 pesan terakhir dari history
-            const recentHistory = chatHistory.slice(-20).map(msg => ({
-                role: msg.role === "zorro" ? "assistant" : "user", // API butuh 'assistant', kita pakai 'zorro' di internal
+            let recentHistory = chatHistory.slice(-MEMORY_LIMIT).map(msg => ({
+                role: msg.role === "zorro" ? "assistant" : "user",
                 content: msg.content
             }));
-            
-            context = context.concat(recentHistory);
+
+            // Gabungkan Prompt System + History
+            let messagesPayload = [
+                { role: "system", content: SYSTEM_PROMPT },
+                ...recentHistory
+            ];
 
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${apiKey}`,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
-                        messages: context, // Kirim seluruh konteks!
-                        temperature: 0.7 // Sedikit kreatif agar conversational
+                        model: "llama-3.3-70b-versatile", // Model Cerdas
+                        messages: messagesPayload,
+                        temperature: 0.7,
+                        max_tokens: 1024
                     })
                 });
 
                 const data = await response.json();
-                document.getElementById('typing-indicator').style.display = "none";
-
-                if (data.error) throw new Error(data.error.message);
+                document.getElementById('typing').style.display = "none";
+                
+                if(data.error) throw new Error(data.error.message);
                 
                 const reply = data.choices[0].message.content;
-                addLocalMessage("zorro", reply);
-                
-                // Voice (Opsional)
-                // const utterance = new SpeechSynthesisUtterance(reply);
-                // utterance.lang = 'id-ID';
-                // window.speechSynthesis.speak(utterance);
+                addMessage("zorro", reply);
 
             } catch (err) {
-                document.getElementById('typing-indicator').style.display = "none";
-                addLocalMessage("zorro", "⚠️ Gangguan koneksi. Coba lagi ya.");
+                document.getElementById('typing').style.display = "none";
+                addMessage("zorro", "⚠️ Gagal terhubung: " + err.message);
             }
         }
 
-        // --- UTILS: VOICE & ENTER KEY ---
-        
+        // --- UTILS ---
         function toggleVoice() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'id-ID';
-            recognition.start();
-            document.getElementById('mic-btn').style.color = "#ef4444";
+            const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            r.lang = 'id-ID'; r.start();
+            document.getElementById('mic-btn').style.background = "#ef4444";
+            document.getElementById('mic-btn').style.color = "#fff";
             
-            recognition.onresult = (e) => {
+            r.onresult = (e) => {
                 document.getElementById('user-input').value = e.results[0][0].transcript;
                 sendMessage();
-                document.getElementById('mic-btn').style.color = "";
+                resetMic();
             };
+            r.onend = resetMic;
+        }
+        function resetMic() {
+            const btn = document.getElementById('mic-btn');
+            btn.style.background = ""; btn.style.color = "";
         }
 
-        // Handle Enter key di Textarea
         document.getElementById('user-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-            // Auto resize textarea
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+            this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';
         });
-
     </script>
 </body>
 </html>
