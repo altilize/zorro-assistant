@@ -3,130 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zorro (Long Term Memory)</title>
+    <title>Zorro AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- TEMA PRO (Deep Focus) --- */
+        /* --- ANIMATED BACKGROUND & THEME --- */
         :root {
-            --bg-color: #09090b; /* Zinc 950 */
-            --header-bg: rgba(9, 9, 11, 0.95);
-            --user-bubble: #2563eb; /* Royal Blue */
-            --user-text: #ffffff;
-            --ai-bubble: #27272a; /* Zinc 800 */
-            --ai-text: #e4e4e7;
-            --timestamp-color: #71717a;
-            --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-accent: #00f2ff;
+            --user-grad-start: #434343;
+            --user-grad-end: #000000;
+            --ai-bg: rgba(0, 0, 0, 0.4);
+            --text-color: #ffffff;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--ai-text);
-            font-family: var(--font-main);
             margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            height: 100dvh;
             display: flex;
             flex-direction: column;
-            height: 100dvh;
             overflow: hidden;
+            
+            /* Animasi Background Gerak */
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
 
-        /* HEADER */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- HEADER GLASS --- */
         header {
-            padding: 15px 20px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #27272a;
-            background: var(--header-bg);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
             z-index: 10;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-        .brand { font-size: 14px; letter-spacing: 1.5px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; }
-        .menu-icon { font-size: 20px; color: #71717a; cursor: pointer; }
 
-        /* CHAT CONTAINER */
+        .brand {
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+        }
+
+        .menu-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .menu-btn:hover { transform: rotate(90deg); color: var(--neon-accent); }
+
+        /* --- CHAT AREA --- */
         #chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Jarak antar chat lebih lega */
+            gap: 20px;
+            scroll-behavior: smooth;
         }
 
-        /* PESAN */
+        /* Scrollbar Halus */
+        #chat-container::-webkit-scrollbar { width: 6px; }
+        #chat-container::-webkit-scrollbar-track { background: transparent; }
+        #chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
         .message-wrapper {
             display: flex;
             flex-direction: column;
             max-width: 85%;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .zorro-wrapper { align-self: flex-start; }
         .user-wrapper { align-self: flex-end; align-items: flex-end; }
 
         .message {
-            padding: 12px 18px;
-            border-radius: 18px;
+            padding: 15px 20px;
+            border-radius: 20px;
             font-size: 15px;
             line-height: 1.6;
-            word-wrap: break-word;
             position: relative;
+            backdrop-filter: blur(5px);
         }
 
-        .zorro-msg { background: var(--ai-bubble); color: var(--ai-text); border-bottom-left-radius: 4px; }
-        .user-msg { background: var(--user-bubble); color: var(--user-text); border-bottom-right-radius: 4px; }
+        /* ZORRO BUBBLE (Glass Dark) */
+        .zorro-msg {
+            background: var(--ai-bg);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
 
-        /* TIMESTAMP DESIGN */
+        /* USER BUBBLE (Gradient) */
+        .user-msg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom-right-radius: 5px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
         .time-info {
             font-size: 10px;
-            color: var(--timestamp-color);
-            margin-top: 5px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 6px;
             margin-left: 5px;
             margin-right: 5px;
-            font-weight: 500;
         }
 
-        /* INPUT AREA */
+        /* --- INPUT AREA (Floating Glass) --- */
         #input-area {
-            padding: 15px;
-            background: var(--header-bg);
-            border-top: 1px solid #27272a;
-            display: flex; gap: 10px; align-items: flex-end;
+            margin: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         #user-input {
             flex: 1;
-            padding: 14px 20px;
-            border-radius: 24px;
-            border: 1px solid #27272a;
-            background: #18181b;
-            color: #fff;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 15px;
             font-size: 16px;
-            font-family: inherit;
+            font-family: 'Poppins', sans-serif;
             outline: none;
             resize: none;
-            max-height: 120px;
-            transition: border-color 0.3s;
+            max-height: 100px;
         }
-        #user-input:focus { border-color: #52525b; }
+        #user-input::placeholder { color: rgba(255,255,255,0.4); }
 
         .icon-btn {
-            width: 45px; height: 45px; border-radius: 50%; border: none;
-            background: #27272a; color: #a1a1aa; cursor: pointer;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
+            transition: all 0.3s ease;
         }
-        .icon-btn:hover { background: #3f3f46; color: white; }
-        .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        .icon-btn:hover { background: white; color: black; transform: scale(1.1); }
+        .icon-btn svg { width: 22px; height: 22px; fill: currentColor; }
+        
+        #send-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        #send-btn:hover { box-shadow: 0 0 15px #764ba2; }
 
-        /* MODALS */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; display: flex; align-items: center; justify-content: center; }
+        /* --- MODAL (Cyberpunk Style) --- */
+        .modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
         .hidden { display: none !important; }
-        .modal-card { background: #18181b; padding: 30px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; border: 1px solid #27272a; }
         
-        input[type="password"] { width: 100%; padding: 14px; background: #09090b; border: 1px solid #333; color: white; border-radius: 8px; text-align: center; margin: 20px 0; outline: none; box-sizing: border-box; }
+        .modal-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%; max-width: 350px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+        }
         
-        .btn-primary { width: 100%; padding: 14px; background: var(--user-bubble); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
-        .btn-danger { background: #dc2626; margin-top: 10px; }
+        input[type="password"] {
+            width: 100%; padding: 15px;
+            background: #000; border: 1px solid #333;
+            color: white; border-radius: 10px;
+            margin: 20px 0; outline: none; text-align: center;
+            transition: border-color 0.3s;
+        }
+        input[type="password"]:focus { border-color: var(--neon-accent); }
+        
+        .btn-primary {
+            width: 100%; padding: 15px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white; font-weight: bold;
+            border: none; border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { box-shadow: 0 0 20px rgba(0, 198, 255, 0.4); }
 
-        #typing { font-size: 12px; color: #71717a; margin-left: 25px; margin-bottom: 10px; font-style: italic; display: none; }
+        /* TYPING ANIMATION (Bouncing Dots) */
+        .typing {
+            display: none; align-items: center; gap: 5px; margin-left: 20px; margin-bottom: 10px;
+        }
+        .dot {
+            width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
     </style>
 </head>
@@ -134,90 +241,86 @@
 
     <div id="login-modal" class="modal hidden">
         <div class="modal-card">
-            <h2 style="color:#fff; font-weight:500; margin-bottom:10px;">Akses Zorro</h2>
-            <p style="color:#71717a; font-size:13px; margin:0;">Masukkan Groq API Key Anda.</p>
+            <h2 style="margin:0; background: linear-gradient(90deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">IDENTITY CHECK</h2>
+            <p style="color:#777; margin-top:10px;">Enter Moses' Security Key</p>
             <input type="password" id="api-key-input" placeholder="gsk_xxxxxxxx...">
-            <button class="btn-primary" onclick="saveApiKey()">Hubungkan</button>
+            <button class="btn-primary" onclick="saveApiKey()">ACCESS SYSTEM</button>
         </div>
     </div>
 
     <div id="menu-modal" class="modal hidden">
         <div class="modal-card">
-            <h3 style="color:#fff;">Pengaturan</h3>
-            <button class="btn-primary" onclick="toggleMenu()" style="background:#3f3f46; margin-bottom:10px;">Kembali</button>
-            <button class="btn-primary btn-danger" onclick="clearHistory()">Lupakan Semua Kenangan</button>
-            <button class="btn-primary btn-danger" style="background:#7f1d1d" onclick="logout()">Ganti API Key</button>
+            <h3 style="color:white;">SYSTEM SETTINGS</h3>
+            <button class="btn-primary" onclick="toggleMenu()" style="background:#333; margin-bottom:10px;">CANCEL</button>
+            <button class="btn-primary" style="background:#ef4444; margin-bottom:10px;" onclick="clearHistory()">WIPE MEMORY</button>
+            <button class="btn-primary" style="background:#7f1d1d" onclick="logout()">LOGOUT</button>
         </div>
     </div>
 
     <header>
-        <div class="brand">ZORRO &bull; PERSONAL</div>
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="brand">ZORRO v2.0</div>
+        <button class="menu-btn" onclick="toggleMenu()">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
     </header>
 
     <div id="chat-container"></div>
-    <div id="typing">Zorro sedang berpikir...</div>
+    
+    <div class="typing" id="typing">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
 
     <div id="input-area">
-        <textarea id="user-input" rows="1" placeholder="Ketik pesan..."></textarea>
+        <textarea id="user-input" rows="1" placeholder="Type a message..."></textarea>
         
         <button class="icon-btn" onclick="toggleVoice()" id="mic-btn">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.66 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
         </button>
         
-        <button class="icon-btn" onclick="sendMessage()" style="color:#60a5fa">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        <button class="icon-btn" id="send-btn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" style="margin-left:3px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
 
     <script>
-        // --- KONFIGURASI MEMORI JANGKA PANJANG ---
+        // --- LOGIC TETAP SAMA (SUPER MEMORY) ---
+        
         const SYSTEM_PROMPT = 
-            "Kamu adalah Zorro, asisten pribadi dan sahabat dekat Moses. " +
-            "Ingatanmu panjang. Kamu mengenal Moses dari percakapan-percakapan sebelumnya. " +
-            "Gunakan konteks sejarah chat untuk memberikan jawaban yang personal. " +
-            "Jika Moses bertanya 'Apa yang kita bahas kemarin?', cek konteks history dan jawab. " +
-            "Jadilah pendengar yang baik, suportif, cerdas, dan sopan. " +
-            "Gunakan Bahasa Indonesia yang natural.";
+            "Kamu adalah Zorro, asisten AI pribadi yang hidup di antarmuka futuristik. " +
+            "Kepribadian: Cerdas, Elegan, namun Santai dan Hangat. " +
+            "Ingatan: Kamu memiliki ingatan jangka panjang tentang Moses. " +
+            "Tugas: Menjadi partner diskusi, teman curhat, dan asisten teknis. " +
+            "Gaya Bicara: Bahasa Indonesia yang natural, sesekali gunakan analogi teknologi.";
 
-        const STORAGE_KEY = "zorro_api_v6"; // Versi baru
-        const HISTORY_KEY = "zorro_full_history_v6";
+        const STORAGE_KEY = "zorro_api_v7";
+        const HISTORY_KEY = "zorro_history_v7";
 
         let apiKey = localStorage.getItem(STORAGE_KEY);
-        // Struktur Data baru: Array of Objects { role, content, time }
         let chatHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
 
-        // INIT
         window.onload = () => {
             if (!apiKey) {
                 document.getElementById('login-modal').classList.remove('hidden');
             } else {
                 renderHistory();
-                if(chatHistory.length === 0) addMessage("zorro", "Halo Moses. Saya siap menemani hari Anda.");
+                if(chatHistory.length === 0) addMessage("zorro", "Sistem online. Halo Moses, ada update apa hari ini?");
             }
         };
 
-        // --- CORE FUNCTIONS ---
         function saveApiKey() {
             const input = document.getElementById('api-key-input').value.trim();
             if (input.startsWith("gsk_")) {
                 localStorage.setItem(STORAGE_KEY, input);
                 apiKey = input;
                 document.getElementById('login-modal').classList.add('hidden');
-            } else {
-                alert("API Key harus diawali 'gsk_'");
-            }
+            } else { alert("Kunci akses tidak valid."); }
         }
 
         function toggleMenu() { document.getElementById('menu-modal').classList.toggle('hidden'); }
+        function logout() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
         
-        function logout() {
-            localStorage.removeItem(STORAGE_KEY);
-            location.reload();
-        }
-
         function clearHistory() {
-            if(confirm("Yakin ingin menghapus semua kenangan?")) {
+            if(confirm("Hapus memori sistem?")) {
                 localStorage.removeItem(HISTORY_KEY);
                 chatHistory = [];
                 renderHistory();
@@ -225,23 +328,15 @@
             }
         }
 
-        // --- TIME FORMATTER ---
         function getFormattedTime() {
             const now = new Date();
-            // Format: 29 Nov, 14:30
-            const options = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
-            return now.toLocaleDateString('id-ID', options);
+            return now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
         }
 
-        // --- RENDER ENGINE ---
         function addMessage(role, text) {
             const time = getFormattedTime();
-            
-            // 1. Simpan ke Memory (Array & LocalStorage)
             chatHistory.push({ role, content: text, time });
             localStorage.setItem(HISTORY_KEY, JSON.stringify(chatHistory));
-            
-            // 2. Tampilkan di Layar
             renderOneMessage(role, text, time);
             scrollToBottom();
         }
@@ -249,24 +344,19 @@
         function renderHistory() {
             const container = document.getElementById('chat-container');
             container.innerHTML = "";
-            chatHistory.forEach(msg => {
-                renderOneMessage(msg.role, msg.content, msg.time);
-            });
+            chatHistory.forEach(msg => renderOneMessage(msg.role, msg.content, msg.time));
             scrollToBottom();
         }
 
         function renderOneMessage(role, text, time) {
             const container = document.getElementById('chat-container');
-            
             const wrapper = document.createElement("div");
             wrapper.className = `message-wrapper ${role === 'zorro' ? 'zorro-wrapper' : 'user-wrapper'}`;
             
-            // Bubble Pesan
             const msgDiv = document.createElement("div");
             msgDiv.className = `message ${role === 'zorro' ? 'zorro-msg' : 'user-msg'}`;
             msgDiv.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
             
-            // Timestamp
             const timeDiv = document.createElement("div");
             timeDiv.className = "time-info";
             timeDiv.innerText = time;
@@ -281,7 +371,6 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        // --- AI LOGIC (LONG MEMORY) ---
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value.trim();
@@ -290,31 +379,21 @@
             input.value = "";
             input.style.height = "auto";
             addMessage("user", text);
-            document.getElementById('typing').style.display = "block";
+            document.getElementById('typing').style.display = "flex";
 
-            // SIAPKAN CONTEXT (SUPER MEMORY)
-            // Llama 3 punya limit token besar, tapi kita batasi 100-200 pesan terakhir
-            // agar browser tidak crash saat parsing JSON raksasa.
             const MEMORY_LIMIT = 200; 
-            
             let recentHistory = chatHistory.slice(-MEMORY_LIMIT).map(msg => ({
                 role: msg.role === "zorro" ? "assistant" : "user",
                 content: msg.content
             }));
-
-            // Gabungkan Prompt System + History
-            let messagesPayload = [
-                { role: "system", content: SYSTEM_PROMPT },
-                ...recentHistory
-            ];
 
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile", // Model Cerdas
-                        messages: messagesPayload,
+                        model: "llama-3.3-70b-versatile",
+                        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...recentHistory],
                         temperature: 0.7,
                         max_tokens: 1024
                     })
@@ -324,33 +403,26 @@
                 document.getElementById('typing').style.display = "none";
                 
                 if(data.error) throw new Error(data.error.message);
-                
-                const reply = data.choices[0].message.content;
-                addMessage("zorro", reply);
+                addMessage("zorro", data.choices[0].message.content);
 
             } catch (err) {
                 document.getElementById('typing').style.display = "none";
-                addMessage("zorro", "⚠️ Gagal terhubung: " + err.message);
+                addMessage("zorro", "⚠️ Gangguan sinyal: " + err.message);
             }
         }
 
-        // --- UTILS ---
         function toggleVoice() {
             const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             r.lang = 'id-ID'; r.start();
-            document.getElementById('mic-btn').style.background = "#ef4444";
-            document.getElementById('mic-btn').style.color = "#fff";
+            document.getElementById('mic-btn').style.background = "white";
+            document.getElementById('mic-btn').style.color = "black";
             
             r.onresult = (e) => {
                 document.getElementById('user-input').value = e.results[0][0].transcript;
                 sendMessage();
-                resetMic();
+                document.getElementById('mic-btn').style.background = "";
+                document.getElementById('mic-btn').style.color = "";
             };
-            r.onend = resetMic;
-        }
-        function resetMic() {
-            const btn = document.getElementById('mic-btn');
-            btn.style.background = ""; btn.style.color = "";
         }
 
         document.getElementById('user-input').addEventListener('keydown', function(e) {
